@@ -145,7 +145,7 @@ function formatFeature (inputFeature) {
     "coordinates": [newPoint[0], newPoint[1]]
   });
   console.log('newPoint', newPoint);
-  console.log('newPointWebMercator', newPointGeographic);
+  console.log('newPointGeographic', newPointGeographic);
   
   // need to find the second point to create a line.
 

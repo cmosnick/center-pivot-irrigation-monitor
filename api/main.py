@@ -2,6 +2,7 @@ from flask import Flask
 import json
 import time
 import copy
+import arcpy
 
 app = Flask(__name__)
 
@@ -12,7 +13,6 @@ def hello_world():
     pivots = copy.deepcopy(j)
     for pivot in pivots:
         # Calculate new angle
-        print pivot
         angle = (pivot["angle"] + (round(time.time())%360) ) % 360
         pivot["angle"] = angle
     return json.dumps(pivots)
