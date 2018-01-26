@@ -68,13 +68,25 @@ function translate (input) {
   }
 }
 
-function setDistance(pointX, pointY, slope, d) {
- 
- // https://math.stackexchange.com/a/656512/42151
- var r = Math.sqrt(1 + Math.pow(slope, 2));
- var newX = pointX + (d/r);
- var newY = pointY + ((d * slope)/r);
+function setDistance(pointX, pointY, adjacent, opposite, d) {
+	console.log('pointX', pointX);
+	console.log('pointY', pointY);
+	
+	console.log('adjacent', adjacent);
+	console.log('opposite', opposite);
+	
+	var newX = pointX + adjacent;
+	var newY = pointY + opposite;
+	
  return [newX, newY];
+}
+
+function toDegrees (angle) {
+  return angle * (180 / Math.PI);
+}
+
+function toRadians (angle) {
+  return angle * (Math.PI / 180);
 }
 
 function formatFeature (inputFeature) {
@@ -115,17 +127,25 @@ function formatFeature (inputFeature) {
   }
 
   console.log('modifiedAngle', modifiedAngle);
-  var slope = Math.tan(modifiedAngle);
-  console.log('slope:', slope);
+  
+  var radians = toRadians(modifiedAngle);
+  
+  var adjacent = length * Math.cos(radians);
+  var opposite = length * Math.sin(radians);
+  console.log('radians:', radians);
+  console.log('adjacent:', adjacent);
+  console.log('opposite:', opposite);
+  console.log('Webmercator X:', webMercatorPoint.coordinates[0]);
+  console.log('Webmercator Y:', webMercatorPoint.coordinates[1]);
 
-  var newPoint = setDistance(x, y, slope, length);
+  var newPoint = setDistance(webMercatorPoint.coordinates[0], webMercatorPoint.coordinates[1], adjacent, opposite, length);
   // since we sent in web mercator, we need to convert back to geographic:
   var newPointGeographic = Terraformer.toGeographic({
     "type": "Point",
     "coordinates": [newPoint[0], newPoint[1]]
   });
   console.log('newPoint', newPoint);
-  console.log('newPointWebMercator', newPointGeographic);
+  console.log('newPointGeographic', newPointGeographic);
   
   // need to find the second point to create a line.
 
