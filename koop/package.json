@@ -24,7 +24,8 @@
     "nodemon": "^1.14.11",
     "standard": "^10.0.0",
     "tap-spec": "^4.1.1",
-    "tape": "^4.6.3"
+    "tape": "^4.6.3",
+    "terraformer": "^1.0.8"
   },
   "repository": {
     "type": "git",
