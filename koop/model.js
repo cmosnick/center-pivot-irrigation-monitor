@@ -7,6 +7,7 @@
 */
 const request = require('request').defaults({gzip: true, json: true})
 // const config = require('config')
+const Terraformer = require('terraformer');
 
 function Model (koop) {}
 
@@ -85,8 +86,18 @@ function formatFeature (inputFeature) {
 
   var length = inputFeature.length;
   var angle = inputFeature.angle;
+  
+
   var x = inputFeature.center[0];
   var y = inputFeature.center[1];
+  // convert point X/Y to web mercator:
+  var webMercatorPoint = new Terraformer.Primitive({
+    "type": "Point",
+    "coordinates": [x, y]
+  }).toMercator();
+
+  console.log('webMercatorPoint', webMercatorPoint);
+  
 
   var modifiedAngle = angle - 270.0; // case for Q4
   
@@ -108,7 +119,13 @@ function formatFeature (inputFeature) {
   console.log('slope:', slope);
 
   var newPoint = setDistance(x, y, slope, length);
+  // since we sent in web mercator, we need to convert back to geographic:
+  var newPointWebMercator = Terraformer.toGeographic({
+    "type": "Point",
+    "coordinates": [newPoint[0], newPoint[1]]
+  });
   console.log('newPoint', newPoint);
+  console.log('newPointWebMercator', newPointWebMercator);
   
   // need to find the second point to create a line.
 
@@ -117,8 +134,8 @@ function formatFeature (inputFeature) {
     type: 'Feature',
     properties: inputFeature,
     geometry: {
-      type: 'Point',
-      coordinates: [inputFeature.center[0], inputFeature.center[1]]
+      type: 'LineString',
+      coordinates: [[x, y], [newPoint[0], newPoint[1]]]
     }
   }
   // But we also want to translate a few of the date fields so they are easier to use downstream
