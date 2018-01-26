@@ -68,15 +68,33 @@ function translate (input) {
   }
 }
 
-function setDistance(pointX, pointY, adjacent, opposite, d) {
+function setDistance(angle, pointX, pointY, adjacent, opposite, d) {
 	console.log('pointX', pointX);
 	console.log('pointY', pointY);
 	
 	console.log('adjacent', adjacent);
 	console.log('opposite', opposite);
 	
-	var newX = pointX + adjacent;
+	var newX = pointX - adjacent;
 	var newY = pointY + opposite;
+	
+	if (angle <= 270.0) {
+    console.log('here3');
+    newX = pointX - adjacent;
+	newY = pointY - opposite;
+	}
+	if (angle <= 180.0) {
+	console.log('here2');
+	newX = pointX + adjacent;
+	newY = pointY - opposite;
+	}
+	if(angle <= 90.0) {
+	console.log('here1');
+	newX = pointX + adjacent;
+	newY = pointY + opposite;
+	}
+	
+	
 	
  return [newX, newY];
 }
@@ -142,7 +160,7 @@ function formatFeature (inputFeature) {
   console.log('Webmercator X:', webMercatorPoint.coordinates[0]);
   console.log('Webmercator Y:', webMercatorPoint.coordinates[1]);
 
-  var newPoint = setDistance(webMercatorPoint.coordinates[0], webMercatorPoint.coordinates[1], adjacent, opposite, length);
+  var newPoint = setDistance(angle, webMercatorPoint.coordinates[0], webMercatorPoint.coordinates[1], adjacent, opposite, length);
   // since we sent in web mercator, we need to convert back to geographic:
   var newPointGeographic = Terraformer.toGeographic({
     "type": "Point",
