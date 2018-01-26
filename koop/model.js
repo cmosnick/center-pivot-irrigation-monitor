@@ -89,6 +89,10 @@ function toRadians (angle) {
   return angle * (Math.PI / 180);
 }
 
+function toMeters (length) {
+	return length * 0.3048;
+}
+
 function formatFeature (inputFeature) {
   // Most of what we need to do here is extract the longitude and latitude
   // of the 'center' property and then use 'length' + 'angle' to create
@@ -96,7 +100,7 @@ function formatFeature (inputFeature) {
   console.log('---');
   console.log('inputFeature', inputFeature);
 
-  var length = inputFeature.length;
+  var length = toMeters(inputFeature.length);
   var angle = inputFeature.angle;
   
 
