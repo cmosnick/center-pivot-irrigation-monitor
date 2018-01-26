@@ -61,17 +61,58 @@ function translate (input) {
 */
 
 function translate (input) {
-  console.log('input', input);
   return {
     type: 'FeatureCollection',
     features: input.map(formatFeature)
   }
 }
 
+function setDistance(pointX, pointY, slope, d) {
+ 
+ // https://math.stackexchange.com/a/656512/42151
+ var r = Math.sqrt(1 + Math.pow(slope, 2));
+ var newX = pointX + (d/r);
+ var newY = pointY + ((d * slope)/r);
+ return [newX, newY];
+}
+
 function formatFeature (inputFeature) {
   // Most of what we need to do here is extract the longitude and latitude
   // of the 'center' property and then use 'length' + 'angle' to create
   // the line.
+  console.log('---');
+  console.log('inputFeature', inputFeature);
+
+  var length = inputFeature.length;
+  var angle = inputFeature.angle;
+  var x = inputFeature.center[0];
+  var y = inputFeature.center[1];
+
+  var modifiedAngle = angle - 270.0; // case for Q4
+  
+  if (angle <= 270.0) {
+    console.log('here3');
+    modifiedAngle = 270.0 - angle;
+  }
+  if (angle <= 180.0) {
+    console.log('here2');
+    modifiedAngle = angle - 90.0;
+  }
+  if(angle <= 90.0) {
+    console.log('here1');
+    modifiedAngle = 90.0 - angle;
+  }
+
+  console.log('modifiedAngle', modifiedAngle);
+  var slope = Math.tan(modifiedAngle);
+  console.log('slope:', slope);
+
+  var newPoint = setDistance(x, y, slope, length);
+  console.log('newPoint', newPoint);
+  
+  // need to find the second point to create a line.
+
+
   const feature = {
     type: 'Feature',
     properties: inputFeature,
