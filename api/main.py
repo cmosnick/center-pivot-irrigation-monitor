@@ -13,6 +13,7 @@ def hello_world():
     pivots = copy.deepcopy(j)
     for pivot in pivots:
         # Calculate new angle
-        angle = (pivot["angle"] + (round(time.time())%360) ) % 360
+        rate = pivot["rate"]
+        angle = (pivot["angle"] + (round(time.time())%360)*3 ) % 360
         pivot["angle"] = angle
     return json.dumps(pivots)
