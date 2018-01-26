@@ -120,12 +120,12 @@ function formatFeature (inputFeature) {
 
   var newPoint = setDistance(x, y, slope, length);
   // since we sent in web mercator, we need to convert back to geographic:
-  var newPointWebMercator = Terraformer.toGeographic({
+  var newPointGeographic = Terraformer.toGeographic({
     "type": "Point",
     "coordinates": [newPoint[0], newPoint[1]]
   });
   console.log('newPoint', newPoint);
-  console.log('newPointWebMercator', newPointWebMercator);
+  console.log('newPointWebMercator', newPointGeographic);
   
   // need to find the second point to create a line.
 
@@ -135,7 +135,7 @@ function formatFeature (inputFeature) {
     properties: inputFeature,
     geometry: {
       type: 'LineString',
-      coordinates: [[x, y], [newPoint[0], newPoint[1]]]
+      coordinates: [[x, y], [newPointGeographic.coordinates[0], newPointGeographic.coordinates[1]]]
     }
   }
   // But we also want to translate a few of the date fields so they are easier to use downstream
