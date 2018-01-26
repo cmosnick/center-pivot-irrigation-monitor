@@ -27,7 +27,7 @@ Model.prototype.getData = function (req, callback) {
   // Call the remote API with our developer key
   // Marut Comment: Replace the url here with our API url, don't actually need a key (for now...)
   // request(`https://developer.trimet.org/ws/v2/vehicles/onRouteOnly/false/appid/${key}`, (err, res, body) => {
-  request(`http://marut764.esri.com/hacka/CPIM-input.json`, (err, res, body) => {
+  request(`http://ps0001370.esri.com:5000/`, (err, res, body) => {
     if (err) return callback(err)
 
   // Assume that output will be regular JSON
@@ -63,14 +63,56 @@ function translate (input) {
 function translate (input) {
   return {
     type: 'FeatureCollection',
-    features: input.resultSet.irrigBoom.map(formatFeature)
+    features: input.map(formatFeature)
   }
+}
+
+function setDistance(pointX, pointY, slope, d) {
+ 
+ // https://math.stackexchange.com/a/656512/42151
+ var r = Math.sqrt(1 + Math.pow(slope, 2));
+ var newX = pointX + (d/r);
+ var newY = pointY + ((d * slope)/r);
+ return [newX, newY];
 }
 
 function formatFeature (inputFeature) {
   // Most of what we need to do here is extract the longitude and latitude
   // of the 'center' property and then use 'length' + 'angle' to create
   // the line.
+  console.log('---');
+  console.log('inputFeature', inputFeature);
+
+  var length = inputFeature.length;
+  var angle = inputFeature.angle;
+  var x = inputFeature.center[0];
+  var y = inputFeature.center[1];
+
+  var modifiedAngle = angle - 270.0; // case for Q4
+  
+  if (angle <= 270.0) {
+    console.log('here3');
+    modifiedAngle = 270.0 - angle;
+  }
+  if (angle <= 180.0) {
+    console.log('here2');
+    modifiedAngle = angle - 90.0;
+  }
+  if(angle <= 90.0) {
+    console.log('here1');
+    modifiedAngle = 90.0 - angle;
+  }
+
+  console.log('modifiedAngle', modifiedAngle);
+  var slope = Math.tan(modifiedAngle);
+  console.log('slope:', slope);
+
+  var newPoint = setDistance(x, y, slope, length);
+  console.log('newPoint', newPoint);
+  
+  // need to find the second point to create a line.
+
+
   const feature = {
     type: 'Feature',
     properties: inputFeature,
