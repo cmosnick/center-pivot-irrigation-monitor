@@ -27,7 +27,7 @@ Model.prototype.getData = function (req, callback) {
   // Call the remote API with our developer key
   // Marut Comment: Replace the url here with our API url, don't actually need a key (for now...)
   // request(`https://developer.trimet.org/ws/v2/vehicles/onRouteOnly/false/appid/${key}`, (err, res, body) => {
-  request(`http://marut764.esri.com/hacka/CPIM-input.json`, (err, res, body) => {
+  request(`http://ps0001370.esri.com:5000/`, (err, res, body) => {
     if (err) return callback(err)
 
   // Assume that output will be regular JSON
@@ -61,9 +61,10 @@ function translate (input) {
 */
 
 function translate (input) {
+  console.log('input', input);
   return {
     type: 'FeatureCollection',
-    features: input.resultSet.irrigBoom.map(formatFeature)
+    features: input.map(formatFeature)
   }
 }
 
